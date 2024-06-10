@@ -12,7 +12,7 @@ import { createVuetify } from 'vuetify';
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import "@mdi/font/css/materialdesignicons.css";
-
+import Datepicker from 'vue3-datepicker'
 const app = createApp(App)
 const vuetify = createVuetify({
   components,
@@ -24,6 +24,7 @@ const vuetify = createVuetify({
 app.use(createPinia())
 app.use(router)
 app.use(vuetify)
+app.use(Datepicker as any)
 app.use(Vue3Toastify, {
   autoClose: 2000
 } as ToastContainerOptions)

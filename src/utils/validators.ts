@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { isEmpty, isEmptyArray, isNullOrUndefined } from './index'
 // import i18n from "@/plugins/i18n";
 // const { t } = i18n.global
@@ -34,9 +35,9 @@ export const emailValidator = (value: unknown) => {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
   if (Array.isArray(value))
-    return value.every(val => re.test(String(val))) || t("validations.enter_valid_email")
+    return value.every(val => re.test(String(val))) || ("validations.enter_valid_email")
 
-  return re.test(String(value)) || t("validations.enter_valid_email")
+  return re.test(String(value)) || ("validations.enter_valid_email")
 }
 
 // 👉 Password Validator
@@ -48,14 +49,14 @@ export const passwordValidator = (password: string) => {
   return (
     // eslint-disable-next-line operator-linebreak
     validPassword ||
-    t("validations.password_validation")
+    ("validations.password_validation")
   )
 }
 
 // 👉 Confirm Password Validator
 export const confirmedValidator = (value: string, target: string) =>
 
-  value === target || t("validations.confirm_password_validation")
+  value === target || ("validations.confirm_password_validation")
 
 // 👉 Between Validator
 export const betweenValidator = (value: unknown, min: number, max: number) => {
@@ -126,7 +127,7 @@ export const urlValidator = (value: unknown) => {
 
   const re = /^(http[s]?:\/\/){0,1}(www\.){0,1}[a-zA-Z0-9\.\-]+\.[a-zA-Z]{2,5}[\.]{0,1}/
 
-  return re.test(String(value)) || t('validations.website_url')
+  return re.test(String(value)) || ('validations.website_url')
 }
 
 export const regexNotAllowSpecialChar = (value: unknown) => {
@@ -214,27 +215,27 @@ export const integerValidatorWithFieldName = (value: unknown, errorMessage: any)
 // 👉 Same Confirm Password Validator
 export const sameConfirmedValidator = (value: string, target: string) =>
 
-  value !== target || t("validations.passwords_not_same")
+  value !== target || ("validations.passwords_not_same")
 
 
 // 👉 Zero And Zero Less Check Validator
-export const zeroValidator = (value: unknown, errorMessage: string) => {
- if (isEmpty(value))
-    return true
-  if (value <= 0) {
-    return `${errorMessage}`
-  }
+// export const zeroValidator = (value: unknown, errorMessage: string) => {
+//  if (isEmpty(value))
+//     return true
+//   if (value <= 0) {
+//     return `${errorMessage}`
+//   }
    
-}
+// }
 
 
-export const floatDecimalValidatorWIthFieldName = (value: unknown, errorMessage: string) => {
-  if (isEmpty(value))
-    return true
+// export const floatDecimalValidatorWIthFieldName = (value: unknown, errorMessage: string) => {
+//   if (isEmpty(value))
+//     return true
 
-  var split = value.split('.');
-      if (split.length === 2 && split[1].length > 2) {
-          // console.log(split[1].length);
-          return `${errorMessage}`;
-      }
-}
+//   var split = value.split('.');
+//       if (split.length === 2 && split[1].length > 2) {
+//           // console.log(split[1].length);
+//           return `${errorMessage}`;
+//       }
+// }

@@ -1,11 +1,15 @@
 
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import Datepicker from 'vue3-datepicker'
+
 import {
   integerValidator,
   validateWithFieldName,
 } from "../utils/validators";
+import { toast } from 'vue3-toastify'
+
 // Interface
 interface Emit {
 (e: 'addTransactions', value: object | any): void
@@ -20,21 +24,60 @@ const amount = ref<string>('')
 const refVForm = ref<any>();
 const type = ref<any>([]);
 const transactionDialog = ref<boolean>(false)
+const expanseDate = ref<any>(null);
+const formattedDate = ref('');
+const createdAt = ref<any>('');
+
 
 // Methods
+
+const formatDate = (date:any) => {
+      if (date) {
+        const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' } as any;
+        formattedDate.value = new Date(date).toLocaleDateString('en-US', options);
+      } else {
+        formattedDate.value = '';
+      }
+    };
+
+    // const getCurrentDate = () => {
+    //   const today = new Date();
+    //   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    //   createdAt.value = today.toLocaleDateString('en-US', options);
+    //   console.log('createdAt.value: ', createdAt.value);
+    // };
+    
+    
 const createTransaction = () => {
   refVForm.value?.validate().then((res: any) => {
+    const d = new Date();
+    createdAt.value = d;
+
     if (res.valid) {
       const input = {
         text: text.value,
         amount: parseFloat(amount.value),
-        type: type.value
+        type: type.value,
+        expanseDate: formattedDate.value,
+        createdAt: createdAt.value
       }
+      const saveIncome = parseFloat(localStorage.getItem('income') || '0');
+      const saveExpense = parseFloat(localStorage.getItem('expense') || '0');
+
+      
+      if ((saveIncome < saveExpense + input.amount) && type.value==='Expense') {
+        toast.error("insufficient balance")
+        transactionDialog.value = false
+      }
+    else{
       emit('addTransactions', input);
       text.value = '';
       amount.value = '';
       type.value = ''; 
-          transactionDialog.value = false
+      expanseDate.value = '',
+      createdAt.value = ''
+      transactionDialog.value = false
+}
     }
 
   }).catch((error: any) => {
@@ -50,6 +93,11 @@ watch(transactionDialog, (val: any)=>{
       type.value = ''; 
   }
 })
+
+//Hooks
+onMounted(() => {
+      // getCurrentDate();
+    });
 </script>
 
 <template>
@@ -102,12 +150,16 @@ watch(transactionDialog, (val: any)=>{
                     validateWithFieldName(
                       type,
                       ('This field is required')
-                    ),
+                    ),      
                   ]"
                   placeholder="Select type"
+                  clearable
                 >
                 </VSelect>
               </VCol>
+
+             
+
               <VCol cols="12">
                 <VTextField
                   
@@ -125,6 +177,16 @@ watch(transactionDialog, (val: any)=>{
                   ]"
                   placeholder="Enter Amount"
                 />
+              </VCol>
+              <VCol cols="12"  class="add-tra">
+                  <Datepicker    
+                  :upperLimit="new Date()"
+                  :clearable="true"  v-model="expanseDate" placeholder="pick date"  @update:model-value="formatDate" >{{ formattedDate }}</Datepicker>
+
+              </VCol>
+              <VCol cols="12" style="display: none;">
+                  <Datepicker v-model="createdAt" placeholder="pick date" @update:model-value="formatDate" >{{ formattedDate }}</Datepicker>
+
               </VCol>
              
             </VRow>

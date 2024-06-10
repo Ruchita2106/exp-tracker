@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
@@ -15,46 +16,33 @@ import AddTransaction from '../components/AddTransaction.vue'
 const transaction = ref<any>([
     {
       id: 1,
-      text: 'Footware',
-      amount: 600,
-      type:'expense'
+      text: 'Salary',
+      amount: 22000,
+      type:'income',
+      expanseDate: 'Sat, Jun 02, 2024',
+      createdAt: 'Sat, Jun 02, 2024'
     },
     {
       id: 2,
-      text: 'Clothes',
-      amount: 5000,
-      type:'expense'
-    },
-    {
-      id: 3,
-      text: 'Extra',
-      amount: 1500,
-      type:'income'
-    },
-    {
-      id: 4,
-      text: 'Grocery',
-      amount: 1000,
-      type:'expense'
-    },
-    {
-      id: 5,
-      text: 'Salary',
-      amount: 22000,
-      type:'income'
+      text: 'extra',
+      amount: 2000,
+      type:'expense',
+      expanseDate: 'Sat, Jun 05, 2024',
+      createdAt: 'Sat, Jun 07, 2024'
     }
   ])
 
 const transactions = ref<any>([])
 
+ 
 // Computed
 
 // total amount
 const totalAmount = computed(() => {
-  return transactions.value.reduce((acc: any, transaction: any) => {
-    return acc + transaction.amount
-  }, 0)
-})
+  const totalIncome = parseFloat(income.value);
+      const totalExpenses = parseFloat(expenses.value);
+      const balance = totalIncome - totalExpenses;
+      return balance >= 0 ? balance.toFixed(2) : "0.00";  })
 
 // income
 const income = computed(() => {
@@ -74,6 +62,7 @@ const expenses = computed(() => {
       return   acc + transaction.amount
     }, 0)
     .toFixed(2)
+    
 })
 
 //methods 
@@ -82,7 +71,13 @@ const expenses = computed(() => {
 const updateLocalStorage = () => {
   localStorage.setItem('transaction', JSON.stringify(transactions.value))
 }
+const storeIncome = () =>{
+  localStorage.setItem('income', JSON.stringify(Number(income.value)))
 
+}
+const storeExpense = () =>{
+  localStorage.setItem('expense', JSON.stringify(Number(expenses.value)))
+}
 //RandomId
 const generateRandomId = () => {
   return Math.floor(Math.random() *10)
@@ -94,13 +89,17 @@ const handleTransactions = (data: any) => {
     id: generateRandomId(),
     text: data.text,
     amount: parseFloat(data.amount),
-    type: data.type
+    type: data.type,
+    expanseDate: data.expanseDate,
+    createdAt: data.createdAt
   }
   console.log("test", input.type);
   
   transactions.value.push(input)
   toast.success('transaction added',)
-  updateLocalStorage()
+  updateLocalStorage();
+  storeIncome();
+  storeExpense();
 
 }
 
@@ -110,7 +109,9 @@ const handleDeleteTransaction = (id: any) => {
  transactions.value.splice(index, 1)
   
   toast.success('transaction deleted')
-  updateLocalStorage()
+  updateLocalStorage();
+  storeIncome();
+  storeExpense();
 }
 
 //hooks
@@ -122,6 +123,8 @@ onMounted(() => {
     transactions.value = JSON.parse(localStorage.getItem('transaction') as any)
 
   }
+  storeIncome();
+  storeExpense();
 })
 </script>
 
